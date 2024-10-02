@@ -4,7 +4,7 @@ import { useDrag, useDrop, DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import './App.css';
 
-const Slot = ({ letter, index, onDrop }) => {
+const Slot = ({ letter, index, onDrop, color }) => {
   const [{ isOver }, drop] = useDrop({
     accept: 'letter',
     drop: (item) => onDrop(item.letter, index),
@@ -17,7 +17,7 @@ const Slot = ({ letter, index, onDrop }) => {
     <div
       ref={drop}
       className="slot"
-      style={{ backgroundColor: isOver ? 'lightblue' : 'white' }}
+      style={{ backgroundColor: color || (isOver ? 'lightblue' : 'white') }}
     >
       {letter || '_'}
     </div>
@@ -57,7 +57,8 @@ const CrosswordGame = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [feedback, setFeedback] = useState('');
   const [hintColors, setHintColors] = useState([]);
-  const [gameStatus, setGameStatus] = useState(''); // Tracks whether the user is correct or needs a hint
+  const [gameStatus, setGameStatus] = useState('');
+  const [isCorrected, setIsCorrected] = useState(false); // Track whether letters are being corrected
 
   useEffect(() => {
     fetchNewWord();
@@ -76,6 +77,7 @@ const CrosswordGame = () => {
       setUsedLetters(new Array(letters.length).fill(false));
       setGameStatus('');
       setShowPopup(false);
+      setIsCorrected(false); // Reset the correction state
     } catch (error) {
       console.error('Error fetching the word:', error);
     }
@@ -85,11 +87,14 @@ const CrosswordGame = () => {
     const newBlanks = [...blanks];
     newBlanks[index] = droppedLetter;
     setBlanks(newBlanks);
-    
+
     const newUsedLetters = [...usedLetters];
     const letterIndex = letterBank.indexOf(droppedLetter);
     newUsedLetters[letterIndex] = true;
     setUsedLetters(newUsedLetters);
+
+    setIsCorrected(true); // Mark as corrected, to reset color to white
+    setHintColors(new Array(blanks.length).fill('')); // Reset hint colors for corrected letters
   };
 
   const handleClick = (clickedLetter) => {
@@ -104,6 +109,9 @@ const CrosswordGame = () => {
       const letterIndex = letterBank.indexOf(clickedLetter);
       newUsedLetters[letterIndex] = true;
       setUsedLetters(newUsedLetters);
+
+      setIsCorrected(true); // Mark as corrected
+      setHintColors(new Array(blanks.length).fill('')); // Reset hint colors
     }
   };
 
@@ -112,6 +120,7 @@ const CrosswordGame = () => {
     let incorrectCount = 0;
     let correctPositions = [];
     let newHintColors = [];
+    let newUsedLetters = [...usedLetters]; // Modify used letters array to mark incorrect ones as available again
 
     if (currentWord.length < word.length) {
       let hints = '';
@@ -119,9 +128,11 @@ const CrosswordGame = () => {
         if (blanks[i] === word[i]) {
           correctPositions.push(i);
           newHintColors[i] = 'green';
+          newUsedLetters[letterBank.indexOf(blanks[i])] = true; // Lock correct letters
         } else {
           incorrectCount++;
           newHintColors[i] = 'red';
+          newUsedLetters[letterBank.indexOf(blanks[i])] = false; // Allow incorrect letters to be moved again
         }
       }
       hints = `You have ${correctPositions.length} correct letter(s) in the right position. ${incorrectCount} incorrect.`;
@@ -135,16 +146,19 @@ const CrosswordGame = () => {
         if (word[i] !== blanks[i]) {
           incorrectCount++;
           newHintColors[i] = 'red';
+          newUsedLetters[letterBank.indexOf(blanks[i])] = false; // Allow incorrect letters to be moved again
         } else {
           newHintColors[i] = 'green';
+          newUsedLetters[letterBank.indexOf(blanks[i])] = true; // Lock correct letters
         }
       }
       setFeedback(`Incorrect. ${incorrectCount} letters are wrong.`);
       setGameStatus('incorrect');
     }
 
+    setUsedLetters(newUsedLetters); // Update used letters to allow incorrect ones to be moved
     setHintColors(newHintColors);
-    setShowPopup(true);
+    setIsCorrected(false); // Set correction flag to false after check
   };
 
   const giveHint = () => {
@@ -152,7 +166,7 @@ const CrosswordGame = () => {
     const newBlanks = [...blanks];
     const newUsedLetters = [...usedLetters];
 
-    // Find the first incorrect or empty letter
+    // Find all incorrect or empty letters
     for (let i = 0; i < word.length; i++) {
       if (blanks[i] !== word[i] || blanks[i] === null) {
         incorrectIndexes.push(i);
@@ -160,10 +174,11 @@ const CrosswordGame = () => {
     }
 
     if (incorrectIndexes.length > 0) {
-      const firstIncorrectIndex = incorrectIndexes[0];
-      const correctLetter = word[firstIncorrectIndex];
+      // Randomly select an incorrect letter
+      const randomIncorrectIndex = incorrectIndexes[Math.floor(Math.random() * incorrectIndexes.length)];
+      const correctLetter = word[randomIncorrectIndex];
 
-      newBlanks[firstIncorrectIndex] = correctLetter;
+      newBlanks[randomIncorrectIndex] = correctLetter;
       setBlanks(newBlanks);
 
       // Mark the correct letter as used
@@ -181,7 +196,13 @@ const CrosswordGame = () => {
         <h1>Crossword Game</h1>
         <div className="word">
           {blanks.map((letter, index) => (
-            <Slot key={index} letter={letter} index={index} onDrop={handleDrop} />
+            <Slot
+              key={index}
+              letter={letter}
+              index={index}
+              onDrop={handleDrop}
+              color={isCorrected && hintColors[index] === 'red' ? '' : hintColors[index]} // Reset incorrect to white/clear if corrected
+            />
           ))}
         </div>
 
@@ -219,6 +240,7 @@ const CrosswordGame = () => {
               {gameStatus === 'correct' ? (
                 <button onClick={fetchNewWord}>New Word</button>
               ) : (
+
                 <button onClick={giveHint}>Hint</button>
               )}
 
@@ -232,3 +254,4 @@ const CrosswordGame = () => {
 };
 
 export default CrosswordGame;
+
