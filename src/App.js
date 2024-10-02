@@ -57,35 +57,35 @@ const CrosswordGame = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [feedback, setFeedback] = useState('');
   const [hintColors, setHintColors] = useState([]);
+  const [gameStatus, setGameStatus] = useState(''); // Tracks whether the user is correct or needs a hint
 
   useEffect(() => {
-    const fetchRandomWord = async () => {
-      try {
-        const response = await axios.get('https://random-word-api.vercel.app/api?words=1');
-        const fetchedWord = response.data[0];
-        setWord(fetchedWord);
-
-        // Create blank slots for each letter in the word
-        setBlanks(new Array(fetchedWord.length).fill(null));
-
-        // Create letter bank with the exact letters from the word, shuffled
-        const letters = fetchedWord.split('').sort(() => Math.random() - 0.5);
-        setLetterBank(letters);
-        setUsedLetters(new Array(letters.length).fill(false));  // Tracks which letters have been used
-      } catch (error) {
-        console.error('Error fetching the word:', error);
-      }
-    };
-
-    fetchRandomWord();
+    fetchNewWord();
   }, []);
+
+  const fetchNewWord = async () => {
+    try {
+      const response = await axios.get('https://random-word-api.vercel.app/api?words=1');
+      const fetchedWord = response.data[0];
+      setWord(fetchedWord);
+
+      setBlanks(new Array(fetchedWord.length).fill(null));
+
+      const letters = fetchedWord.split('').sort(() => Math.random() - 0.5);
+      setLetterBank(letters);
+      setUsedLetters(new Array(letters.length).fill(false));
+      setGameStatus('');
+      setShowPopup(false);
+    } catch (error) {
+      console.error('Error fetching the word:', error);
+    }
+  };
 
   const handleDrop = (droppedLetter, index) => {
     const newBlanks = [...blanks];
     newBlanks[index] = droppedLetter;
     setBlanks(newBlanks);
     
-    // Mark letter as used
     const newUsedLetters = [...usedLetters];
     const letterIndex = letterBank.indexOf(droppedLetter);
     newUsedLetters[letterIndex] = true;
@@ -100,7 +100,6 @@ const CrosswordGame = () => {
       newBlanks[emptyIndex] = clickedLetter;
       setBlanks(newBlanks);
 
-      // Mark letter as used
       const newUsedLetters = [...usedLetters];
       const letterIndex = letterBank.indexOf(clickedLetter);
       newUsedLetters[letterIndex] = true;
@@ -115,7 +114,6 @@ const CrosswordGame = () => {
     let newHintColors = [];
 
     if (currentWord.length < word.length) {
-      // If the word is not yet fully spelled, give hints
       let hints = '';
       for (let i = 0; i < word.length; i++) {
         if (blanks[i] === word[i]) {
@@ -129,11 +127,10 @@ const CrosswordGame = () => {
       hints = `You have ${correctPositions.length} correct letter(s) in the right position. ${incorrectCount} incorrect.`;
       setFeedback(hints);
     } else if (currentWord === word) {
-      // If the word is fully correct
-      setFeedback('Correct! Great job!');
+      setFeedback('Great job! You spelled the word correctly!');
+      setGameStatus('correct');
       newHintColors = new Array(word.length).fill('green');
     } else {
-      // If the word is fully spelled but incorrect
       for (let i = 0; i < word.length; i++) {
         if (word[i] !== blanks[i]) {
           incorrectCount++;
@@ -143,10 +140,39 @@ const CrosswordGame = () => {
         }
       }
       setFeedback(`Incorrect. ${incorrectCount} letters are wrong.`);
+      setGameStatus('incorrect');
     }
 
     setHintColors(newHintColors);
     setShowPopup(true);
+  };
+
+  const giveHint = () => {
+    const incorrectIndexes = [];
+    const newBlanks = [...blanks];
+    const newUsedLetters = [...usedLetters];
+
+    // Find the first incorrect or empty letter
+    for (let i = 0; i < word.length; i++) {
+      if (blanks[i] !== word[i] || blanks[i] === null) {
+        incorrectIndexes.push(i);
+      }
+    }
+
+    if (incorrectIndexes.length > 0) {
+      const firstIncorrectIndex = incorrectIndexes[0];
+      const correctLetter = word[firstIncorrectIndex];
+
+      newBlanks[firstIncorrectIndex] = correctLetter;
+      setBlanks(newBlanks);
+
+      // Mark the correct letter as used
+      const letterIndex = letterBank.indexOf(correctLetter);
+      newUsedLetters[letterIndex] = true;
+      setUsedLetters(newUsedLetters);
+
+      setShowPopup(false);
+    }
   };
 
   return (
@@ -189,6 +215,13 @@ const CrosswordGame = () => {
                   </span>
                 ))}
               </div>
+
+              {gameStatus === 'correct' ? (
+                <button onClick={fetchNewWord}>New Word</button>
+              ) : (
+                <button onClick={giveHint}>Hint</button>
+              )}
+
               <button onClick={() => setShowPopup(false)}>Close</button>
             </div>
           </div>
