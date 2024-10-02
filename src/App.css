@@ -85,3 +85,10 @@
   border: none;
   border-radius: 5px;
 }
+
+/* Keep existing styles, but add this for the popup */
+.hint-letter {
+  font-size: 2em;
+  margin: 0 5px;
+}
+
