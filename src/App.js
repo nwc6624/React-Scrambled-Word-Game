@@ -63,13 +63,9 @@ const CrosswordGame = () => {
         // Create blank slots for each letter in the word
         setBlanks(new Array(fetchedWord.length).fill(null));
 
-        // Create letter bank (random letters + word letters)
-        const letters = fetchedWord.split('');
-        const randomLetters = 'abcdefghijklmnopqrstuvwxyz'.split('');
-        const shuffledBank = [...letters, ...randomLetters.slice(0, 5)].sort(
-          () => Math.random() - 0.5
-        );
-        setLetterBank(shuffledBank);
+        // Create letter bank with the exact letters from the word, shuffled
+        const letters = fetchedWord.split('').sort(() => Math.random() - 0.5);
+        setLetterBank(letters);
       } catch (error) {
         console.error('Error fetching the word:', error);
       }
@@ -87,16 +83,30 @@ const CrosswordGame = () => {
   const checkIfCorrect = () => {
     const currentWord = blanks.join('');
     let incorrectCount = 0;
+    let correctPositions = [];
 
-    for (let i = 0; i < word.length; i++) {
-      if (word[i] !== blanks[i]) {
-        incorrectCount++;
+    if (currentWord.length < word.length) {
+      // If the word is not yet fully spelled, give hints
+      let hints = '';
+      for (let i = 0; i < word.length; i++) {
+        if (blanks[i] === word[i]) {
+          correctPositions.push(i);
+        } else {
+          incorrectCount++;
+        }
       }
-    }
-
-    if (currentWord === word) {
+      hints = `You have ${correctPositions.length} correct letter(s) in the right position. ${incorrectCount} incorrect.`;
+      setFeedback(hints);
+    } else if (currentWord === word) {
+      // If the word is fully correct
       setFeedback('Correct! Great job!');
     } else {
+      // If the word is fully spelled but incorrect
+      for (let i = 0; i < word.length; i++) {
+        if (word[i] !== blanks[i]) {
+          incorrectCount++;
+        }
+      }
       setFeedback(`Incorrect. ${incorrectCount} letters are wrong.`);
     }
 
@@ -133,6 +143,10 @@ const CrosswordGame = () => {
       </div>
     </DndProvider>
   );
+};
+
+export default CrosswordGame;
+
 };
 
 export default CrosswordGame;
