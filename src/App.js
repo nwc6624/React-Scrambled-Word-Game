@@ -14,7 +14,11 @@ const Slot = ({ letter, index, onDrop }) => {
   });
 
   return (
-    <div ref={drop} className="slot" style={{ backgroundColor: isOver ? 'lightblue' : 'white' }}>
+    <div
+      ref={drop}
+      className="slot"
+      style={{ backgroundColor: isOver ? 'lightblue' : 'white' }}
+    >
       {letter || '_'}
     </div>
   );
@@ -30,7 +34,13 @@ const Letter = ({ letter }) => {
   });
 
   return (
-    <div ref={drag} className="letter" style={{ opacity: isDragging ? 0.5 : 1 }}>
+    <div
+      ref={drag}
+      className="letter"
+      style={{
+        opacity: isDragging ? 0.5 : 1,
+      }}
+    >
       {letter}
     </div>
   );
@@ -40,6 +50,8 @@ const CrosswordGame = () => {
   const [word, setWord] = useState('');
   const [blanks, setBlanks] = useState([]);
   const [letterBank, setLetterBank] = useState([]);
+  const [showPopup, setShowPopup] = useState(false);
+  const [feedback, setFeedback] = useState('');
 
   useEffect(() => {
     const fetchRandomWord = async () => {
@@ -54,7 +66,9 @@ const CrosswordGame = () => {
         // Create letter bank (random letters + word letters)
         const letters = fetchedWord.split('');
         const randomLetters = 'abcdefghijklmnopqrstuvwxyz'.split('');
-        const shuffledBank = [...letters, ...randomLetters.slice(0, 5)].sort(() => Math.random() - 0.5);
+        const shuffledBank = [...letters, ...randomLetters.slice(0, 5)].sort(
+          () => Math.random() - 0.5
+        );
         setLetterBank(shuffledBank);
       } catch (error) {
         console.error('Error fetching the word:', error);
@@ -71,7 +85,22 @@ const CrosswordGame = () => {
   };
 
   const checkIfCorrect = () => {
-    return word === blanks.join('');
+    const currentWord = blanks.join('');
+    let incorrectCount = 0;
+
+    for (let i = 0; i < word.length; i++) {
+      if (word[i] !== blanks[i]) {
+        incorrectCount++;
+      }
+    }
+
+    if (currentWord === word) {
+      setFeedback('Correct! Great job!');
+    } else {
+      setFeedback(`Incorrect. ${incorrectCount} letters are wrong.`);
+    }
+
+    setShowPopup(true);
   };
 
   return (
@@ -91,12 +120,20 @@ const CrosswordGame = () => {
           ))}
         </div>
 
-        <button onClick={checkIfCorrect}>Check</button>
+        <button onClick={checkIfCorrect} className="check-button">Check</button>
+
+        {showPopup && (
+          <div className="popup">
+            <div className="popup-content">
+              <h2>{feedback}</h2>
+              <button onClick={() => setShowPopup(false)}>Close</button>
+            </div>
+          </div>
+        )}
       </div>
     </DndProvider>
   );
 };
 
 export default CrosswordGame;
-
 
