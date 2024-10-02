@@ -5,7 +5,30 @@
 ![image](https://github.com/user-attachments/assets/494d23a2-dc78-46d4-a90e-5aee7df27cb0)
 
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**React**: Frontend framework for building interactive user interfaces.
+**React DnD**: Enables drag-and-drop functionality for interactive gameplay.
+**Axios**: Used for making HTTP requests to fetch random words from the API.
+**JavaScript (ES6)**: Core language for logic and interactivity.
+**CSS**: Styling for the crossword game layout and components.
+**Random Word API**: Provides random words to challenge the player.
+# This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+## Features
+**Drag or Click Letters:**
+
+Players can drag letters from the bank to the blanks or simply click them to place them in the leftmost empty slot.
+Once a letter has been used, it turns red and becomes unselectable.
+**Check for Correctness:**
+
+When the "Check" button is pressed, a popup will inform the user if the word is correct or how many letters are wrong.
+If the word is spelled incorrectly, the player can opt to receive a hint, where a blank or incorrect letter will be filled in automatically.
+**Get New Words:**
+
+When the player completes the word correctly, they are given the option to fetch a new word and continue playing.
+**Hints System:**
+
+Players can ask for hints if the word is spelled incorrectly. The hint will fill in a correct letter in the word and mark the corresponding letter as used.
+
 
 ## Available Scripts
 
