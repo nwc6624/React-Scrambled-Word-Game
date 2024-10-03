@@ -16,20 +16,20 @@
 # This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).<br />
 
 ## Features
-**Drag or Click Letters:**
+**Drag or Click Letters:**<br />
 
 Players can drag letters from the bank to the blanks or simply click them to place them in the leftmost empty slot.
-Once a letter has been used, it turns red and becomes unselectable.
-**Check for Correctness:**
+Once a letter has been used, it turns red and becomes unselectable.<br />
+**Check for Correctness:**<br />
 
 When the "Check" button is pressed, a popup will inform the user if the word is correct or how many letters are wrong.
-If the word is spelled incorrectly, the player can opt to receive a hint, where a blank or incorrect letter will be filled in automatically.
-**Get New Words:**
+If the word is spelled incorrectly, the player can opt to receive a hint, where a blank or incorrect letter will be filled in automatically.<br />
+**Get New Words:**<br />
 
-When the player completes the word correctly, they are given the option to fetch a new word and continue playing.
-**Hints System:**
+When the player completes the word correctly, they are given the option to fetch a new word and continue playing.<br />
+**Hints System:** <br />
 
-Players can ask for hints if the word is spelled incorrectly. The hint will fill in a correct letter in the word and mark the corresponding letter as used.
+Players can ask for hints if the word is spelled incorrectly. The hint will fill in a correct letter in the word and mark the corresponding letter as used.<br />
 
 
 ## Available Scripts
