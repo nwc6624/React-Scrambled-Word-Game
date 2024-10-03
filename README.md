@@ -7,13 +7,14 @@
 ![image](https://github.com/user-attachments/assets/494d23a2-dc78-46d4-a90e-5aee7df27cb0)
 
 
-**React**: Frontend framework for building interactive user interfaces.
-**React DnD**: Enables drag-and-drop functionality for interactive gameplay.
-**Axios**: Used for making HTTP requests to fetch random words from the API.
-**JavaScript (ES6)**: Core language for logic and interactivity.
-**CSS**: Styling for the crossword game layout and components.
-**Random Word API**: Provides random words to challenge the player.
-# This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**React**: Frontend framework for building interactive user interfaces. <br />
+**React DnD**: Enables drag-and-drop functionality for interactive gameplay.<br />
+**Axios**: Used for making HTTP requests to fetch random words from the API.<br />
+**JavaScript (ES6)**: Core language for logic and interactivity.<br />
+
+**CSS**: Styling for the crossword game layout and components.<br />
+**Random Word API**: Provides random words to challenge the player.<br />
+# This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).<br />
 
 ## Features
 **Drag or Click Letters:**
