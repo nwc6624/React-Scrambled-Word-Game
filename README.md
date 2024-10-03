@@ -1,9 +1,13 @@
 # Basic react crossword app project
 
 # demo image as of 10/2/24
-![image](https://github.com/user-attachments/assets/a38b529f-db7a-4e71-872d-cdbeb186c1eb)
+![image](https://github.com/user-attachments/assets/314c6672-191e-4952-bf2a-3b6cf3442c96)
 
-![image](https://github.com/user-attachments/assets/494d23a2-dc78-46d4-a90e-5aee7df27cb0)
+![image](https://github.com/user-attachments/assets/f5143d44-12ce-4181-afaa-ce2e31f96021)
+![image](https://github.com/user-attachments/assets/dc57bf78-c337-4cfc-a06a-f1cf9984a61b)
+
+
+
 
 
 **React**: Frontend framework for building interactive user interfaces. <br />
