@@ -1,5 +1,4 @@
-# Getting Started with Create React App
-
+# Basic react crossword app project
 
 # demo image as of 10/2/24
 ![image](https://github.com/user-attachments/assets/a38b529f-db7a-4e71-872d-cdbeb186c1eb)
