@@ -49,7 +49,7 @@ const Letter = ({ letter, index, onClick, isUsed }) => {
   );
 };
 
-const CrosswordGame = () => {
+const ScrambledWordGame = () => {
   const [word, setWord] = useState('');
   const [blanks, setBlanks] = useState([]);
   const [letterBank, setLetterBank] = useState([]);
@@ -136,7 +136,7 @@ const CrosswordGame = () => {
     if (currentWord === word) {
       setFeedback('Congratulations, you win!');
       setGameStatus('won');
-      setShowPopup(true); // Show popup when the player wins
+      setShowPopup(true);
     } else {
       setFeedback(`You have ${correctPositions.length} correct letter(s). ${incorrectCount} incorrect.`);
       setShowPopup(true);
@@ -178,7 +178,11 @@ const CrosswordGame = () => {
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="game-container">
-        <h1>Crossword Game</h1>
+        <h1>Scrambled Word Game</h1>
+        <p className="description">
+          Try to unscramble the letters to form the correct word. Drag or click on letters and place them in the correct slots. 
+          Click "Check" when you're ready to see if you've guessed correctly. Use hints if you get stuck!
+        </p>
         <div className="word">
           {blanks.map((letter, index) => (
             <Slot
@@ -232,6 +236,10 @@ const CrosswordGame = () => {
       </div>
     </DndProvider>
   );
+};
+
+export default ScrambledWordGame;
+
 };
 
 export default CrosswordGame;
